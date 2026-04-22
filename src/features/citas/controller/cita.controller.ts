@@ -34,6 +34,21 @@ export class CitaController {
         }
     };
 
+    listarHistorial = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const resultado = await this.citaService.obtenerHistorialCitas();
+            res.status(200).json({
+                success: true,
+                data: resultado
+            });
+        } catch (error: any) {
+            res.status(500).json({ 
+                success: false, 
+                message: error.message 
+            });
+        }
+    };
+
     responderCita = async (req: Request, res: Response): Promise<void> => {
         try {
             const { id } = req.params;

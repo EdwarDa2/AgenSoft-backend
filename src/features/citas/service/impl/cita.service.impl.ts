@@ -40,6 +40,11 @@ export class CitaServiceImpl {
         return citas.map((cita: any) => CitaMapper.toResponseDTO(cita));
     }
 
+    async obtenerHistorialCitas() {
+        const citas = await this.citaRepository.obtenerHistorial();
+        return citas.map((cita: any) => CitaMapper.toResponseDTO(cita));
+    }
+
     async responderSolicitud(id_cita: number, aceptar: boolean) {
         const nuevoEstado = aceptar ? 2 : 3;
         

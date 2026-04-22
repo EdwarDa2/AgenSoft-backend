@@ -8,6 +8,7 @@ const citaController = new CitaController();
 router.get('/stats', citaController.obtenerEstadisticas);
 router.post('/solicitar', citaController.solicitarCita);
 router.get('/pendientes', citaController.listarPendientes);
+router.get('/historial', citaController.listarHistorial);
 router.patch('/:id/responder', citaController.responderCita);
 router.patch('/:id/reprogramar', citaController.reprogramarCita);
 router.get('/paciente/:paciente_id', citaController.listarMisCitas);

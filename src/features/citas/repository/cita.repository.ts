@@ -19,9 +19,24 @@ export class CitaRepository {
             where: { estado_id },
             include: {
                 paciente: true,
-                bloque: true
+                bloque: true,
+                estado: true
             },
             orderBy: { creado_en: 'desc' }
+        });
+    }
+
+    async obtenerHistorial(): Promise<any[]> {
+        return await prisma.cita.findMany({
+            where: {
+                estado_id: { in: [2, 3, 4] } // 2: Aceptada, 3: Rechazada, 4: Cancelada
+            },
+            include: {
+                paciente: true,
+                bloque: true,
+                estado: true
+            },
+            orderBy: { actualizado_en: 'desc' }
         });
     }
 
