@@ -9,6 +9,7 @@ import cors from 'cors';
 import usuariosRoutes from './features/usuarios/usuarios.routes.js';
 import citasRoutes from './features/citas/citas.routes.js';
 import horariosRoutes from './features/horarios/horario.route.js';
+import pacientesRoutes from './features/pacientes/pacientes.routes.js';
 
 const app = express();
 
@@ -35,6 +36,7 @@ const apiV1 = express.Router();
 apiV1.use('/usuarios', usuariosRoutes);
 apiV1.use('/citas', citasRoutes);
 apiV1.use('/horarios', horariosRoutes);
+apiV1.use('/pacientes', pacientesRoutes);
 
 app.use('/api/v1', apiV1);
 
