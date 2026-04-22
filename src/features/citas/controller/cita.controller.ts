@@ -97,4 +97,38 @@ export class CitaController {
             res.status(statusCode).json({ success: false, message: error.message });
         }
     };
+
+    obtenerEstadisticas = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const stats = await this.citaService.obtenerEstadisticas();
+            res.status(200).json({
+                success: true,
+                data: stats
+            });
+        } catch (error: any) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    };
+
+    reprogramarCita = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const { id } = req.params;
+            const { nuevo_bloque_id } = req.body;
+
+            if (!nuevo_bloque_id) {
+                res.status(400).json({ success: false, message: "El ID del nuevo bloque es obligatorio" });
+                return;
+            }
+
+            const resultado = await this.citaService.reprogramarCita(Number(id), Number(nuevo_bloque_id));
+            
+            res.status(200).json({
+                success: true,
+                message: "Cita reprogramada exitosamente",
+                data: resultado
+            });
+        } catch (error: any) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    };
 }

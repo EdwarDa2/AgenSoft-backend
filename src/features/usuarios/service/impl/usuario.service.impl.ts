@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import type { RegistrarUsuarioDTO, LoginDTO, ActualizarUsuarioDTO, LoginResponseDTO, CambiarPasswordDTO, UsuarioResponseDTO } from '../../model/dto/usuario.dto.js';
+import type { RegistrarUsuarioDTO, LoginDTO, ActualizarUsuarioDTO, LoginResponseDTO, CambiarPasswordDTO } from '../../model/dto/usuario.dto.js';
+import type { UsuarioResponseDTO } from '../../model/entity/usuario.entity.js';
 import { UsuarioRepository } from '../../repository/usuario.repository.js';
 import { UsuarioMapper } from '../../mapper/usuario.mapper.js';
 import type { IUsuarioService } from '../usuario.service.js';

@@ -5,9 +5,9 @@ export class CitaMapper {
     static toResponseDTO(entity: any): RespuestaCitaDTO {
         return {
             id_cita: entity.id,
-            paciente: entity.paciente_nombre,
-            fecha: entity.fecha_bloque,
-            hora_inicio: entity.hora_inicio,
+            paciente: entity.paciente?.nombre_completo || 'N/A',
+            fecha: entity.bloque?.fecha?.toISOString().split('T')[0] || 'N/A',
+            hora_inicio: entity.bloque?.hora_inicio?.toISOString().split('T')[1]?.substring(0, 5) || 'N/A',
             estado: this.mapearEstado(entity.estado_id)
         };
     }
@@ -16,7 +16,8 @@ export class CitaMapper {
         const estados: Record<number, string> = {
             1: 'Pendiente',
             2: 'Confirmada',
-            3: 'Cancelada'
+            3: 'Rechazada',
+            4: 'Cancelada'
         };
         return estados[estadoId] || 'Desconocido';
     }

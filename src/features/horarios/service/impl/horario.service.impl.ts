@@ -26,21 +26,32 @@ export class HorarioServiceImpl {
         const reglas = await this.horarioRepository.obtenerHorariosBase();
         const bloquesNuevos = [];
 
-        // 1. Iterar desde datos.fecha_inicio hasta datos.fecha_fin
-        // 2. Por cada día, revisar qué día de la semana es (ej. es Lunes?)
-        // 3. Buscar la regla del Lunes en "reglas"
-        // 4. Si es laboral, hacer un ciclo iterando cada 'datos.duracion_minutos'
-        // 5. Crear el objeto para Prisma: { fecha, hora_inicio, hora_fin, estado_id: 1 (Libre) }
-        // 6. Hacer push a bloquesNuevos[]
+        const start = new Date(datos.fecha_inicio);
+        const end = new Date(datos.fecha_fin);
+        const duracion = datos.duracion_minutos;
 
-        /* Ejemplo de estructura generada:
-           bloquesNuevos.push({
-               fecha: new Date('2024-11-01'),
-               hora_inicio: new Date('1970-01-01T09:00:00Z'),
-               hora_fin: new Date('1970-01-01T09:30:00Z'),
-               estado_id: 1 // Usaremos 1 para 'Libre' en el contexto de bloques
-           });
-        */
+        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+            const diaSemana = d.getDay(); // 0: Domingo, 1: Lunes, ...
+            const regla = reglas.find(r => r.dia_semana === diaSemana);
+
+            if (regla && regla.es_laboral) {
+                let current = new Date(regla.hora_inicio);
+                const limit = new Date(regla.hora_fin);
+
+                while (current.getTime() + duracion * 60000 <= limit.getTime()) {
+                    const next = new Date(current.getTime() + duracion * 60000);
+                    
+                    bloquesNuevos.push({
+                        fecha: new Date(d),
+                        hora_inicio: new Date(current),
+                        hora_fin: new Date(next),
+                        estado_id: 1 // 1: Libre / Disponible
+                    });
+                    
+                    current = next;
+                }
+            }
+        }
 
         if (bloquesNuevos.length > 0) {
             await this.horarioRepository.crearBloquesMasivos(bloquesNuevos);
