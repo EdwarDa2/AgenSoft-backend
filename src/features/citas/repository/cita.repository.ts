@@ -33,4 +33,11 @@ export class CitaRepository {
         });
         return citaExistente === null;
     }
+
+    async actualizarEstado(id: number, estado_id: number) {
+        return await prisma.cita.update({
+            where: { id },
+            data: { estado_id }
+        });
+    }
 }

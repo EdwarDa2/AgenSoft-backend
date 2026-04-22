@@ -30,4 +30,12 @@ export class CitaServiceImpl {
         const citas = await this.citaRepository.obtenerPorEstado(1);
         return citas.map(cita => CitaMapper.toResponseDTO(cita));
     }
+
+    async responderSolicitud(id_cita: number, aceptar: boolean) {
+        const nuevoEstado = aceptar ? 2 : 3;
+        
+        const citaActualizada = await this.citaRepository.actualizarEstado(id_cita, nuevoEstado);
+        
+        return CitaMapper.toResponseDTO(citaActualizada);
+    }
 }

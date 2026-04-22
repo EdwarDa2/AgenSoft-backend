@@ -33,4 +33,26 @@ export class CitaController {
             });
         }
     };
+
+    responderCita = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const { id } = req.params;
+            const { aceptar } = req.body; // boolean: true para aceptar, false para rechazar
+
+            if (typeof aceptar !== 'boolean') {
+                res.status(400).json({ success: false, message: "El campo 'aceptar' debe ser booleano" });
+                return;
+            }
+
+            const resultado = await this.citaService.responderSolicitud(Number(id), aceptar);
+            
+            res.status(200).json({
+                success: true,
+                message: aceptar ? "Cita aceptada exitosamente" : "Cita rechazada",
+                data: resultado
+            });
+        } catch (error: any) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    };
 }

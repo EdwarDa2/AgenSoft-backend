@@ -7,5 +7,6 @@ const citaController = new CitaController();
 // Rutas base: /api/citas (o el prefijo que uses en tu archivo principal)
 router.post('/solicitar', citaController.solicitarCita);
 router.get('/pendientes', citaController.listarPendientes);
+router.patch('/:id/responder', citaController.responderCita);
 
 export default router;
