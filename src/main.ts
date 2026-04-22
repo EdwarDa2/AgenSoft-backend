@@ -10,6 +10,7 @@ import usuariosRoutes from './features/usuarios/usuarios.routes.js';
 import citasRoutes from './features/citas/citas.routes.js';
 import horariosRoutes from './features/horarios/horario.route.js';
 import pacientesRoutes from './features/pacientes/pacientes.routes.js';
+import bloquesRoutes from './features/bloques/bloques.routes.js';
 
 const app = express();
 
@@ -37,6 +38,7 @@ apiV1.use('/usuarios', usuariosRoutes);
 apiV1.use('/citas', citasRoutes);
 apiV1.use('/horarios', horariosRoutes);
 apiV1.use('/pacientes', pacientesRoutes);
+apiV1.use('/bloques', bloquesRoutes);
 
 app.use('/api/v1', apiV1);
 
