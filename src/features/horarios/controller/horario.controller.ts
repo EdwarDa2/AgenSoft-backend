@@ -21,7 +21,15 @@ export class HorarioController {
     generarBloques = async (req: Request, res: Response) => {
         try {
             const resultado = await this.horarioService.generarBloquesDelMes(req.body);
-            res.status(201).json({ status: 'success', message: `${resultado.generados} bloques creados.` });
+            if (resultado.generados > 0) {
+                res.status(201).json({ status: 'success', message: `${resultado.generados} bloques creados.` });
+            } else {
+                res.status(200).json({ 
+                    status: 'success', 
+                    message: resultado.error || "0 bloques creados.",
+                    debug: resultado.debug 
+                });
+            }
         } catch (error) {
             res.status(500).json({ status: 'error', message: 'Error al generar bloques' });
         }
