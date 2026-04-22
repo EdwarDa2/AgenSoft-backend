@@ -30,15 +30,21 @@ async function main() {
   })
 
   await prisma.estadoCita.upsert({
-    where: { nombre: 'Aceptada' },
+    where: { nombre: 'Confirmada' },
     update: {},
-    create: { nombre: 'Aceptada' },
+    create: { nombre: 'Confirmada' },
   })
 
   await prisma.estadoCita.upsert({
     where: { nombre: 'Rechazada' },
     update: {},
     create: { nombre: 'Rechazada' },
+  })
+
+  await prisma.estadoCita.upsert({
+    where: { nombre: 'Cancelada' },
+    update: {},
+    create: { nombre: 'Cancelada' },
   })
 
   console.log('Seeding finished successfully')
