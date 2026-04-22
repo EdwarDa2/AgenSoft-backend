@@ -17,6 +17,10 @@ export class CitaRepository {
     async obtenerPorEstado(estado_id: number): Promise<any[]> {
         return await prisma.cita.findMany({
             where: { estado_id },
+            include: {
+                paciente: true,
+                bloque: true
+            },
             orderBy: { creado_en: 'desc' }
         });
     }
@@ -44,13 +48,60 @@ export class CitaRepository {
     async obtenerPorPaciente(paciente_id: number) {
         return await prisma.cita.findMany({
             where: { paciente_id: paciente_id },
+            include: {
+                bloque: true,
+                estado: true
+            },
             orderBy: { creado_en: 'desc' }
         });
     }
 
     async obtenerPorId(id: number) {
         return await prisma.cita.findUnique({
-            where: { id: id }
+            where: { id: id },
+            include: {
+                paciente: true,
+                bloque: true,
+                estado: true
+            }
+        });
+    }
+
+    async obtenerEstadisticas() {
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        const mañana = new Date(hoy);
+        mañana.setDate(hoy.getDate() + 1);
+
+        const [citasHoy, pendientes] = await Promise.all([
+            prisma.cita.count({
+                where: {
+                    bloque: {
+                        fecha: {
+                            gte: hoy,
+                            lt: mañana
+                        }
+                    },
+                    estado_id: 2 // 2: Confirmada
+                }
+            }),
+            prisma.cita.count({
+                where: {
+                    estado_id: 1 // 1: Pendiente
+                }
+            })
+        ]);
+
+        return { citasHoy, pendientes };
+    }
+
+    async reprogramar(id_cita: number, nuevo_bloque_id: number) {
+        return await prisma.cita.update({
+            where: { id: id_cita },
+            data: { 
+                bloque_id: nuevo_bloque_id,
+                estado_id: 2 // Al reprogramar, la pasamos a confirmada (o según regla)
+            }
         });
     }
 }

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { BloqueServiceImpl } from '../service/impl/bloque.service.impl.js';
 import type { CrearBloqueDTO, ActualizarBloqueDTO, GenerarBloquesDTO } from '../model/dto/bloque.dto.js';
 

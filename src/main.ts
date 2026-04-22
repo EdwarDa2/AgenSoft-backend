@@ -2,6 +2,7 @@
  * Main: Punto de entrada de la aplicación Express
  * Configura middleware, rutas y inicia el servidor
  */
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 

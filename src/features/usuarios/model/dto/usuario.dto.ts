@@ -31,11 +31,13 @@ export interface ActualizarUsuarioDTO {
  * Incluye token o datos básicos del usuario
  */
 export interface LoginResponseDTO {
-  id: number;
-  nombre: string;
-  email: string;
-  rol_id: number;
-  token?: string;
+  user: {
+    id: number;
+    nombre: string;
+    email: string;
+    rol: string;
+  };
+  token: string;
 }
 
 /**

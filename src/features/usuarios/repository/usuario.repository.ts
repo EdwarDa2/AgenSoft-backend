@@ -35,11 +35,12 @@ export class UsuarioRepository {
    * Obtiene un usuario por email
    * Útil para login y validaciones de unicidad
    */
-  async obtenerPorEmail(email: string): Promise<UsuarioEntity | null> {
+  async obtenerPorEmail(email: string): Promise<any | null> {
     const usuario = await prisma.usuario.findUnique({
       where: { email },
+      include: { rol: true }
     });
-    return usuario as unknown as UsuarioEntity | null;
+    return usuario;
   }
 
   /**

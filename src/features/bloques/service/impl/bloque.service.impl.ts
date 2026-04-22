@@ -2,11 +2,12 @@ import { BloqueRepository } from '../../repository/bloque.repository.js';
 import { BloqueMapper } from '../../mapper/bloque.mapper.js';
 import type { IBloqueService } from '../bloque.service.js';
 import type { CrearBloqueDTO, ActualizarBloqueDTO, GenerarBloquesDTO } from '../../model/dto/bloque.dto.js';
+import type { BloqueResponseDTO } from '../../model/entity/bloque.entity.js';
 
 export class BloqueServiceImpl implements IBloqueService {
   private bloqueRepository = new BloqueRepository();
 
-  async crear(dto: CrearBloqueDTO) {
+  async crear(dto: CrearBloqueDTO): Promise<BloqueResponseDTO> {
     if (!dto.fecha || !dto.hora_inicio || !dto.hora_fin) {
       throw new Error('fecha, hora_inicio y hora_fin son requeridos');
     }
@@ -26,29 +27,29 @@ export class BloqueServiceImpl implements IBloqueService {
     return BloqueMapper.toResponseDTO(bloque);
   }
 
-  async obtenerPorId(id: number) {
+  async obtenerPorId(id: number): Promise<BloqueResponseDTO> {
     if (!id || id <= 0) throw new Error('ID inválido');
     const bloque = await this.bloqueRepository.obtenerPorId(id);
     if (!bloque) throw new Error('Bloque no encontrado');
     return BloqueMapper.toResponseDTO(bloque);
   }
 
-  async obtenerPorFecha(fecha: string) {
+  async obtenerPorFecha(fecha: string): Promise<BloqueResponseDTO[]> {
     const bloques = await this.bloqueRepository.obtenerPorFecha(fecha);
     return BloqueMapper.toResponseDTOs(bloques);
   }
 
-  async obtenerPorRango(fechaInicio: string, fechaFin: string) {
+  async obtenerPorRango(fechaInicio: string, fechaFin: string): Promise<BloqueResponseDTO[]> {
     const bloques = await this.bloqueRepository.obtenerPorRangoFecha(fechaInicio, fechaFin);
     return BloqueMapper.toResponseDTOs(bloques);
   }
 
-  async obtenerTodos(skip: number = 0, take: number = 10) {
+  async obtenerTodos(skip: number = 0, take: number = 10): Promise<BloqueResponseDTO[]> {
     const bloques = await this.bloqueRepository.obtenerTodos(skip, take);
     return BloqueMapper.toResponseDTOs(bloques);
   }
 
-  async actualizar(id: number, dto: ActualizarBloqueDTO) {
+  async actualizar(id: number, dto: ActualizarBloqueDTO): Promise<BloqueResponseDTO> {
     if (!id || id <= 0) throw new Error('ID inválido');
     const bloqueExistente = await this.bloqueRepository.obtenerPorId(id);
     if (!bloqueExistente) throw new Error('Bloque no encontrado');
@@ -65,14 +66,14 @@ export class BloqueServiceImpl implements IBloqueService {
     return BloqueMapper.toResponseDTO(bloqueActualizado);
   }
 
-  async eliminar(id: number) {
+  async eliminar(id: number): Promise<void> {
     if (!id || id <= 0) throw new Error('ID inválido');
     const bloque = await this.bloqueRepository.obtenerPorId(id);
     if (!bloque) throw new Error('Bloque no encontrado');
     await this.bloqueRepository.eliminar(id);
   }
 
-  async generar(dto: GenerarBloquesDTO) {
+  async generar(dto: GenerarBloquesDTO): Promise<BloqueResponseDTO[]> {
     // Generación simple de bloques diarios entre fechas con duración en minutos
     const { fecha_inicio, fecha_fin, hora_inicio, hora_fin, duracion_minutos } = dto;
     // Se asume validaciones por el controller
@@ -89,8 +90,14 @@ export class BloqueServiceImpl implements IBloqueService {
       const fecha = `${yyyy}-${mm}-${dd}`;
 
       // Convertir horas a minutos
-      const [hStart, mStart] = hora_inicio.split(':').map(Number);
-      const [hEnd, mEnd] = hora_fin.split(':').map(Number);
+      const startParts = hora_inicio.split(':');
+      const hStart = Number(startParts[0] ?? 0);
+      const mStart = Number(startParts[1] ?? 0);
+
+      const endParts = hora_fin.split(':');
+      const hEnd = Number(endParts[0] ?? 0);
+      const mEnd = Number(endParts[1] ?? 0);
+
       let cursor = hStart * 60 + mStart;
       const endMinutes = hEnd * 60 + mEnd;
 

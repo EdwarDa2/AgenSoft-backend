@@ -23,7 +23,10 @@ export class CitaServiceImpl {
             estado_id: 1
         });
 
-        return CitaMapper.toResponseDTO(entidad);
+        // Recuperar la entidad completa con relaciones para el mapper
+        const citaCompleta = await this.citaRepository.obtenerPorId(entidad.id);
+
+        return CitaMapper.toResponseDTO(citaCompleta);
     }
 
     async obtenerCitasPendientes() {
@@ -36,14 +39,18 @@ export class CitaServiceImpl {
         
         const citaActualizada = await this.citaRepository.actualizarEstado(id_cita, nuevoEstado);
         
-        return CitaMapper.toResponseDTO(citaActualizada);
+        // Recuperar con relaciones
+        const citaCompleta = await this.citaRepository.obtenerPorId(citaActualizada.id);
+        
+        return CitaMapper.toResponseDTO(citaCompleta);
     }
 
     async obtenerMisCitas(paciente_id: number) {
         if (!paciente_id) {
             throw new Error("El ID del paciente es requerido");
         }
-        return await this.citaRepository.obtenerPorPaciente(paciente_id);
+        const citas = await this.citaRepository.obtenerPorPaciente(paciente_id);
+        return citas.map(cita => CitaMapper.toResponseDTO(cita));
     }
 
     async cancelarCita(id_cita: number, paciente_id: number) {
@@ -64,5 +71,21 @@ export class CitaServiceImpl {
 
         // Actualizamos al estado 4 (Cancelada)
         return await this.citaRepository.actualizarEstado(id_cita, 4);
+    }
+
+    async obtenerEstadisticas() {
+        return await this.citaRepository.obtenerEstadisticas();
+    }
+
+    async reprogramarCita(id_cita: number, nuevo_bloque_id: number) {
+        // Verificar que el nuevo bloque esté disponible
+        const disponible = await this.citaRepository.verificarDisponibilidad(nuevo_bloque_id);
+        if (!disponible) {
+            throw new Error("El nuevo horario seleccionado ya no está disponible");
+        }
+
+        const actualizada = await this.citaRepository.reprogramar(id_cita, nuevo_bloque_id);
+        const completa = await this.citaRepository.obtenerPorId(actualizada.id);
+        return CitaMapper.toResponseDTO(completa);
     }
 }
