@@ -7,15 +7,96 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Definición de modelos basada en tu DER (Ejemplo: Cita)
-model Cita {
-  id              Int      @id @default(autoincrement())
-  paciente_id     Int
-  bloque_id       Int
-  motivo_consulta String   @db.VarChar(255)
-  estado_id       Int
-  creado_en       DateTime @default(now())
-  actualizado_en  DateTime @updatedAt
+// ==================== CATÁLOGOS ====================
 
-  @@map("citas") // Mapeo al nombre exacto de la tabla en el script de infra
+model Rol {
+  id    Int     @id @default(autoincrement())
+  nombre String @db.VarChar(50) @unique
+
+  usuarios Usuario[]
+
+  @@map("roles")
+}
+
+model EstadoCita {
+  id    Int     @id @default(autoincrement())
+  nombre String @db.VarChar(50) @unique
+
+  citas Cita[]
+  bloques_calendario BloqueCalendario[]
+
+  @@map("estados_cita")
+}
+
+model HorarioBase {
+  id            Int     @id @default(autoincrement())
+  dia_semana    Int     @db.SmallInt
+  hora_inicio   String  @db.Time
+  hora_fin      String  @db.Time
+  es_laboral    Boolean @default(true)
+
+  @@map("horarios_base")
+}
+
+// ==================== ENTIDADES PRINCIPALES ====================
+
+model Usuario {
+  id       Int     @id @default(autoincrement())
+  nombre   String  @db.VarChar(100)
+  email    String  @db.VarChar(100) @unique
+  password String  @db.VarChar(255)
+  rol_id   Int
+  creado_en DateTime @default(now())
+  actualizado_en DateTime @updatedAt
+
+  rol Rol @relation(fields: [rol_id], references: [id])
+  paciente Paciente?
+
+  @@map("usuarios")
+}
+
+model Paciente {
+  id                  Int     @id @default(autoincrement())
+  usuario_id          Int     @unique
+  nombre_completo     String  @db.VarChar(150)
+  telefono            String? @db.VarChar(20)
+  informacion_medica  String? @db.Text
+
+  usuario Usuario @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  citas Cita[]
+
+  @@map("pacientes")
+}
+
+model BloqueCalendario {
+  id          Int     @id @default(autoincrement())
+  fecha       String  @db.Date
+  hora_inicio String  @db.Time
+  hora_fin    String  @db.Time
+  estado_id   Int
+  creado_en   DateTime @default(now())
+  actualizado_en DateTime @updatedAt
+
+  estado EstadoCita @relation(fields: [estado_id], references: [id])
+  citas Cita[]
+
+  @@map("bloques_calendario")
+}
+
+// ==================== ENTIDADES TRANSACCIONALES ====================
+
+model Cita {
+  id                Int     @id @default(autoincrement())
+  paciente_id       Int
+  bloque_id         Int
+  motivo_consulta   String  @db.VarChar(255)
+  estado_id         Int
+  creado_en         DateTime @default(now())
+  actualizado_en    DateTime @updatedAt
+
+  paciente Paciente @relation(fields: [paciente_id], references: [id])
+  bloque BloqueCalendario @relation(fields: [bloque_id], references: [id])
+  estado EstadoCita @relation(fields: [estado_id], references: [id])
+
+  @@map("citas")
 }
