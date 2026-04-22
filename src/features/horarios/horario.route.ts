@@ -1,10 +1,14 @@
+// horarios.routes.ts
 import { Router } from 'express';
 import { HorarioController } from './controller/horario.controller.js';
 
 const router = Router();
-const horarioController = new HorarioController();
+const controller = new HorarioController();
 
-// GET /api/horarios/disponibles?fecha=2026-04-25
-router.get('/disponibles', horarioController.obtenerDisponibles);
+// POST /api/v1/horarios/configurar
+router.post('/configurar', controller.configurarHorario);
+
+// POST /api/v1/horarios/generar
+router.post('/generar', controller.generarBloques);
 
 export default router;

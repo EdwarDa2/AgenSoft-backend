@@ -1,24 +1,33 @@
-import prisma from '../../../config/prisma.js';
+// horario.repository.ts
+import { prisma } from '../../../config/db.js';
 
 export class HorarioRepository {
-    async obtenerBloquesDisponiblesPorFecha(fechaIso: Date) {
-        return await prisma.bloquesCalendario.findMany({
-            where: {
-                fecha: fechaIso,
-                // Excluimos los bloques que ya tienen una cita asociada en estado 1 (Pendiente) o 2 (Aceptada)
-                citas: {
-                    none: {
-                        estado_id: { in: [1, 2] }
-                    }
-                }
-            },
-            include: {
-                // Traemos la información del horario base (hora de inicio y fin)
-                horario_base: true 
-            },
-            orderBy: {
-                horario_base: { hora_inicio: 'asc' }
+    
+    // Configura el horario general de un día (ej. Lunes de 9 a 5)
+    async guardarHorarioBase(dia: number, inicio: Date, fin: Date, esLaboral: boolean) {
+        // Borramos la configuración anterior de ese día para evitar duplicados
+        await prisma.horarioBase.deleteMany({ where: { dia_semana: dia } });
+        
+        return await prisma.horarioBase.create({
+            data: {
+                dia_semana: dia,
+                hora_inicio: inicio,
+                hora_fin: fin,
+                es_laboral: esLaboral
             }
+        });
+    }
+
+    // Obtiene las reglas para saber cómo generar los bloques
+    async obtenerHorariosBase() {
+        return await prisma.horarioBase.findMany();
+    }
+
+    // Inserta masivamente todos los huecos de 30 mins para el mes
+    async crearBloquesMasivos(bloques: any[]) {
+        return await prisma.bloqueCalendario.createMany({
+            data: bloques,
+            skipDuplicates: true
         });
     }
 }

@@ -1,26 +1,29 @@
+// horario.controller.ts
 import { Request, Response } from 'express';
 import { HorarioServiceImpl } from '../service/impl/horario.service.impl.js';
 
 export class HorarioController {
-    private horarioService = new HorarioServiceImpl();
+    private horarioService: HorarioServiceImpl;
 
-    obtenerDisponibles = async (req: Request, res: Response): Promise<void> => {
+    constructor() {
+        this.horarioService = new HorarioServiceImpl();
+    }
+
+    configurarHorario = async (req: Request, res: Response) => {
         try {
-            const { fecha } = req.query;
+            const resultado = await this.horarioService.configurarDia(req.body);
+            res.status(200).json({ status: 'success', data: resultado });
+        } catch (error) {
+            res.status(500).json({ status: 'error', message: 'Error al configurar horario' });
+        }
+    };
 
-            if (!fecha || typeof fecha !== 'string') {
-                res.status(400).json({ success: false, message: "El parámetro de consulta 'fecha' es requerido (YYYY-MM-DD)" });
-                return;
-            }
-
-            const disponibles = await this.horarioService.consultarDisponibilidad(fecha);
-
-            res.status(200).json({
-                success: true,
-                data: disponibles
-            });
-        } catch (error: any) {
-            res.status(400).json({ success: false, message: error.message });
+    generarBloques = async (req: Request, res: Response) => {
+        try {
+            const resultado = await this.horarioService.generarBloquesDelMes(req.body);
+            res.status(201).json({ status: 'success', message: `${resultado.generados} bloques creados.` });
+        } catch (error) {
+            res.status(500).json({ status: 'error', message: 'Error al generar bloques' });
         }
     };
 }
