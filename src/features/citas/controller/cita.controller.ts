@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { CitaServiceImpl } from '../service/impl/cita.service.impl.js';
 
 export class CitaController {

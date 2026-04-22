@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { PacienteServiceImpl } from '../service/impl/paciente.service.impl.js';
 import type { CrearPacienteDTO, ActualizarPacienteDTO } from '../model/dto/paciente.dto.js';
 

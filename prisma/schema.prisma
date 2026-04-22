@@ -29,11 +29,11 @@ model EstadoCita {
 }
 
 model HorarioBase {
-  id            Int     @id @default(autoincrement())
-  dia_semana    Int     @db.SmallInt
-  hora_inicio   String  @db.Time
-  hora_fin      String  @db.Time
-  es_laboral    Boolean @default(true)
+  id            Int      @id @default(autoincrement())
+  dia_semana    Int      @db.SmallInt
+  hora_inicio   DateTime @db.Time
+  hora_fin      DateTime @db.Time
+  es_laboral    Boolean  @default(true)
 
   @@map("horarios_base")
 }
@@ -69,10 +69,10 @@ model Paciente {
 }
 
 model BloqueCalendario {
-  id          Int     @id @default(autoincrement())
-  fecha       String  @db.Date
-  hora_inicio String  @db.Time
-  hora_fin    String  @db.Time
+  id          Int      @id @default(autoincrement())
+  fecha       DateTime @db.Date
+  hora_inicio DateTime @db.Time
+  hora_fin    DateTime @db.Time
   estado_id   Int
   creado_en   DateTime @default(now())
   actualizado_en DateTime @updatedAt

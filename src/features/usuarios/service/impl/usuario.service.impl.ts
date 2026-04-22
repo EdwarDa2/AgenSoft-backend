@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import type { RegistrarUsuarioDTO, LoginDTO, ActualizarUsuarioDTO, LoginResponseDTO, CambiarPasswordDTO, UsuarioResponseDTO } from '../../model/dto/usuario.dto.js';
 import { UsuarioRepository } from '../../repository/usuario.repository.js';
 import { UsuarioMapper } from '../../mapper/usuario.mapper.js';
@@ -71,23 +72,33 @@ export class UsuarioServiceImpl implements IUsuarioService {
     // Obtener usuario por email
     const usuario = await this.usuarioRepository.obtenerPorEmail(dto.email);
     if (!usuario) {
+      console.log(`Login fallido: Usuario no encontrado para email ${dto.email}`);
       throw new Error('Email o contraseña incorrectos');
     }
 
     // Verificar contraseña
     const passwordValida = await bcrypt.compare(dto.password, usuario.password);
     if (!passwordValida) {
+      console.log(`Login fallido: Contraseña incorrecta para email ${dto.email}`);
       throw new Error('Email o contraseña incorrectos');
     }
 
-    // Retornar datos del usuario (sin password)
+    // Generar Token JWT
+    const token = jwt.sign(
+      { id: usuario.id, email: usuario.email, rol: usuario.rol.nombre },
+      process.env.JWT_SECRET || 'secret_fallback',
+      { expiresIn: '24h' }
+    );
+
+    // Retornar datos del usuario (sin password) y el token
     return {
-      id: usuario.id,
-      nombre: usuario.nombre,
-      email: usuario.email,
-      rol_id: usuario.rol_id,
-      // TODO: Generar JWT token aquí si se requiere autenticación basada en tokens
-      // token: this.generarToken(usuario.id, usuario.rol_id)
+      user: {
+        id: usuario.id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        rol: usuario.rol.nombre.toLowerCase(),
+      },
+      token: token
     };
   }
 

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { UsuarioServiceImpl } from '../service/impl/usuario.service.impl.js';
 import type { RegistrarUsuarioDTO, LoginDTO, ActualizarUsuarioDTO, CambiarPasswordDTO } from '../model/dto/usuario.dto.js';
 

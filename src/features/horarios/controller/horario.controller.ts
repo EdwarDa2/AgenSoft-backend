@@ -1,5 +1,5 @@
 // horario.controller.ts
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { HorarioServiceImpl } from '../service/impl/horario.service.impl.js';
 
 export class HorarioController {
