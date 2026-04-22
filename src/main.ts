@@ -5,6 +5,8 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
 
 // Importar rutas de features
 import usuariosRoutes from './features/usuarios/usuarios.routes.js';
@@ -16,6 +18,12 @@ import bloquesRoutes from './features/bloques/bloques.routes.js';
 const app = express();
 
 // ==================== MIDDLEWARE ====================
+
+// Helmet - Seguridad de headers HTTP
+app.use(helmet());
+
+// Morgan - Logging de solicitudes HTTP en consola
+app.use(morgan('dev'));
 
 // CORS - Permitir solicitudes desde otros orígenes
 app.use(cors());
