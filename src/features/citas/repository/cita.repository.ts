@@ -67,6 +67,12 @@ export class CitaRepository {
         });
     }
 
+    async obtenerPacientePorUsuarioId(usuario_id: number) {
+        return await prisma.paciente.findUnique({
+            where: { usuario_id }
+        });
+    }
+
     async obtenerEstadisticas() {
         const hoy = new Date();
         hoy.setHours(0, 0, 0, 0);

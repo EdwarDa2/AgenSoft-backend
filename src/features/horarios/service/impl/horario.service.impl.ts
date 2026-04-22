@@ -26,15 +26,18 @@ export class HorarioServiceImpl {
         const reglas = await this.horarioRepository.obtenerHorariosBase();
         const bloquesNuevos = [];
 
+        // Aseguramos que las fechas se traten sin problemas de zona horaria local
         const start = new Date(datos.fecha_inicio);
         const end = new Date(datos.fecha_fin);
         const duracion = datos.duracion_minutos;
 
-        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-            const diaSemana = d.getDay(); // 0: Domingo, 1: Lunes, ...
-            const regla = reglas.find(r => r.dia_semana === diaSemana);
+        let d = new Date(start);
+        while (d <= end) {
+            const diaSemana = d.getUTCDay(); // Usar UTC para consistencia con la fecha de entrada
+            const regla = reglas.find((r: any) => r.dia_semana === diaSemana);
 
             if (regla && regla.es_laboral) {
+                // regla.hora_inicio ya viene como Date de Prisma (ej: 1970-01-01T09:00:00Z)
                 let current = new Date(regla.hora_inicio);
                 const limit = new Date(regla.hora_fin);
 
@@ -51,6 +54,8 @@ export class HorarioServiceImpl {
                     current = next;
                 }
             }
+            // Avanzar al siguiente día en UTC
+            d.setUTCDate(d.getUTCDate() + 1);
         }
 
         if (bloquesNuevos.length > 0) {
