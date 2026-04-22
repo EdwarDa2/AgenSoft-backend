@@ -10,6 +10,12 @@ export class CitaServiceImpl {
             throw new Error("El ID del paciente y el bloque son obligatorios");
         }
 
+        // El paciente_id que viene del front es en realidad el usuario_id del AuthContext
+        const paciente = await this.citaRepository.obtenerPacientePorUsuarioId(dto.paciente_id);
+        if (!paciente) {
+            throw new Error("No se encontró el perfil de paciente para este usuario");
+        }
+
         const disponible = await this.citaRepository.verificarDisponibilidad(dto.bloque_id);
         
         if (!disponible) {
@@ -17,7 +23,7 @@ export class CitaServiceImpl {
         }
 
         const entidad = await this.citaRepository.crear({
-            paciente_id: dto.paciente_id,
+            paciente_id: paciente.id,
             bloque_id: dto.bloque_id,
             motivo_consulta: dto.motivo_consulta || "Sin motivo",
             estado_id: 1
@@ -31,7 +37,7 @@ export class CitaServiceImpl {
 
     async obtenerCitasPendientes() {
         const citas = await this.citaRepository.obtenerPorEstado(1);
-        return citas.map(cita => CitaMapper.toResponseDTO(cita));
+        return citas.map((cita: any) => CitaMapper.toResponseDTO(cita));
     }
 
     async responderSolicitud(id_cita: number, aceptar: boolean) {
@@ -45,22 +51,29 @@ export class CitaServiceImpl {
         return CitaMapper.toResponseDTO(citaCompleta);
     }
 
-    async obtenerMisCitas(paciente_id: number) {
-        if (!paciente_id) {
-            throw new Error("El ID del paciente es requerido");
+    async obtenerMisCitas(usuario_id: number) {
+        if (!usuario_id) {
+            throw new Error("El ID del usuario es requerido");
         }
-        const citas = await this.citaRepository.obtenerPorPaciente(paciente_id);
-        return citas.map(cita => CitaMapper.toResponseDTO(cita));
+        
+        const paciente = await this.citaRepository.obtenerPacientePorUsuarioId(usuario_id);
+        if (!paciente) {
+            return []; // O lanzar error si prefieres, pero un paciente sin perfil no tiene citas
+        }
+
+        const citas = await this.citaRepository.obtenerPorPaciente(paciente.id);
+        return citas.map((cita: any) => CitaMapper.toResponseDTO(cita));
     }
 
-    async cancelarCita(id_cita: number, paciente_id: number) {
+    async cancelarCita(id_cita: number, usuario_id: number) {
         const cita = await this.citaRepository.obtenerPorId(id_cita);
 
         if (!cita) {
             throw new Error("La cita no existe");
         }
 
-        if (cita.paciente_id !== paciente_id) {
+        const paciente = await this.citaRepository.obtenerPacientePorUsuarioId(usuario_id);
+        if (!paciente || cita.paciente_id !== paciente.id) {
             throw new Error("No tienes permisos para cancelar esta cita");
         }
 
