@@ -40,4 +40,17 @@ export class CitaRepository {
             data: { estado_id }
         });
     }
+
+    async obtenerPorPaciente(paciente_id: number) {
+        return await prisma.cita.findMany({
+            where: { paciente_id: paciente_id },
+            orderBy: { creado_en: 'desc' }
+        });
+    }
+
+    async obtenerPorId(id: number) {
+        return await prisma.cita.findUnique({
+            where: { id: id }
+        });
+    }
 }

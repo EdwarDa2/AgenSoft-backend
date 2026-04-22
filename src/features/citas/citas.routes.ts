@@ -8,5 +8,7 @@ const citaController = new CitaController();
 router.post('/solicitar', citaController.solicitarCita);
 router.get('/pendientes', citaController.listarPendientes);
 router.patch('/:id/responder', citaController.responderCita);
+router.get('/paciente/:paciente_id', citaController.listarMisCitas);
+router.patch('/:id/cancelar', citaController.cancelarCita);
 
 export default router;

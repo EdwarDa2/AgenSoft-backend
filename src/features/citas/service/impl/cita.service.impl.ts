@@ -38,4 +38,31 @@ export class CitaServiceImpl {
         
         return CitaMapper.toResponseDTO(citaActualizada);
     }
+
+    async obtenerMisCitas(paciente_id: number) {
+        if (!paciente_id) {
+            throw new Error("El ID del paciente es requerido");
+        }
+        return await this.citaRepository.obtenerPorPaciente(paciente_id);
+    }
+
+    async cancelarCita(id_cita: number, paciente_id: number) {
+        const cita = await this.citaRepository.obtenerPorId(id_cita);
+
+        if (!cita) {
+            throw new Error("La cita no existe");
+        }
+
+        if (cita.paciente_id !== paciente_id) {
+            throw new Error("No tienes permisos para cancelar esta cita");
+        }
+
+        // 3: Rechazada, 4: Cancelada
+        if (cita.estado_id === 3 || cita.estado_id === 4) {
+            throw new Error("La cita ya se encuentra rechazada o cancelada");
+        }
+
+        // Actualizamos al estado 4 (Cancelada)
+        return await this.citaRepository.actualizarEstado(id_cita, 4);
+    }
 }
