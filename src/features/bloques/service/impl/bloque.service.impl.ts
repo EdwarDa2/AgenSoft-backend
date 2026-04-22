@@ -76,50 +76,49 @@ export class BloqueServiceImpl implements IBloqueService {
   async generar(dto: GenerarBloquesDTO): Promise<BloqueResponseDTO[]> {
     // Generación simple de bloques diarios entre fechas con duración en minutos
     const { fecha_inicio, fecha_fin, hora_inicio, hora_fin, duracion_minutos } = dto;
-    // Se asume validaciones por el controller
+    
+    if (!duracion_minutos || duracion_minutos <= 0) {
+      throw new Error('La duración en minutos debe ser mayor a 0');
+    }
+
     const resultados: any[] = [];
 
-    // Lógica: iterar por días y crear bloques consecutivos
-    const start = new Date(fecha_inicio);
-    const end = new Date(fecha_fin);
+    const [yStart, mStart, dStart] = (fecha_inicio || '').split('-').map(Number);
+    const [yEnd, mEnd, dEnd] = (fecha_fin || '').split('-').map(Number);
 
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth() + 1).padStart(2, '0');
-      const dd = String(d.getDate()).padStart(2, '0');
-      const fecha = `${yyyy}-${mm}-${dd}`;
+    const start = new Date(Date.UTC(yStart ?? 0, (mStart ?? 1) - 1, dStart ?? 1));
+    const end = new Date(Date.UTC(yEnd ?? 0, (mEnd ?? 1) - 1, dEnd ?? 1));
 
-      // Convertir horas a minutos
-      const startParts = hora_inicio.split(':');
-      const hStart = Number(startParts[0] ?? 0);
-      const mStart = Number(startParts[1] ?? 0);
+    for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
+      const [hStart, mStartLocal] = (hora_inicio || '00:00').split(':').map(Number);
+      const [hEnd, mEndLocal] = (hora_fin || '00:00').split(':').map(Number);
 
-      const endParts = hora_fin.split(':');
-      const hEnd = Number(endParts[0] ?? 0);
-      const mEnd = Number(endParts[1] ?? 0);
-
-      let cursor = hStart * 60 + mStart;
-      const endMinutes = hEnd * 60 + mEnd;
+      let cursor = (hStart ?? 0) * 60 + (mStartLocal ?? 0);
+      const endMinutes = (hEnd ?? 0) * 60 + (mEndLocal ?? 0);
 
       while (cursor + duracion_minutos <= endMinutes) {
-        const sH = String(Math.floor(cursor / 60)).padStart(2, '0');
-        const sM = String(cursor % 60).padStart(2, '0');
+        const sH = Math.floor(cursor / 60);
+        const sM = cursor % 60;
         const eCursor = cursor + duracion_minutos;
-        const eH = String(Math.floor(eCursor / 60)).padStart(2, '0');
-        const eM = String(eCursor % 60).padStart(2, '0');
+        const eH = Math.floor(eCursor / 60);
+        const eM = eCursor % 60;
+
+        // Crear fechas UTC para hora_inicio y hora_fin
+        const hInicioDate = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), sH, sM, 0));
+        const hFinDate = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), eH, eM, 0));
 
         const bloque = await this.bloqueRepository.crear({
-          fecha,
-          hora_inicio: `${sH}:${sM}:00`,
-          hora_fin: `${eH}:${eM}:00`,
+          fecha: d, // Pasamos el objeto Date
+          hora_inicio: hInicioDate,
+          hora_fin: hFinDate,
           estado_id: 1,
-        });
+        } as any);
 
         resultados.push(bloque);
         cursor = eCursor;
       }
     }
 
-    return BloqueMapper.toResponseDTOs(resultados as any);
+    return BloqueMapper.toResponseDTOs(resultados);
   }
 }
