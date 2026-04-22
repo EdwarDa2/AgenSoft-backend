@@ -1,0 +1,21 @@
+// Configuración del motor de base de datos usando variables de entorno
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Definición de modelos basada en tu DER (Ejemplo: Cita)
+model Cita {
+  id              Int      @id @default(autoincrement())
+  paciente_id     Int
+  bloque_id       Int
+  motivo_consulta String   @db.VarChar(255)
+  estado_id       Int
+  creado_en       DateTime @default(now())
+  actualizado_en  DateTime @updatedAt
+
+  @@map("citas") // Mapeo al nombre exacto de la tabla en el script de infra
+}
