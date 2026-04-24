@@ -6,6 +6,7 @@ import type { CrearPacienteDTO, ActualizarPacienteDTO } from '../../model/dto/pa
 export class PacienteServiceImpl implements IPacienteService {
   private pacienteRepository = new PacienteRepository();
 
+
   async crear(dto: CrearPacienteDTO) {
     const usuarioId = Number(dto.usuario_id);
     console.log(`Intentando crear perfil para usuario_id: ${usuarioId}`);
