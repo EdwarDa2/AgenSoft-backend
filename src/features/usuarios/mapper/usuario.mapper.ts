@@ -1,4 +1,5 @@
-import type { UsuarioEntity, UsuarioResponseDTO } from '../entity/usuario.entity.js';
+import type { UsuarioEntity } from '../model/entity/usuario.entity.js'
+import type { UsuarioResponseDTO } from '../model/entity/usuario.entity.js';
 
 /**
  * Mapper: Transforma datos de Usuario entre diferentes formatos
