@@ -32,6 +32,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Root path for Render health check
+app.get('/', (req, res) => {
+  res.json({ 
+    name: 'AgenSoft API',
+    version: '1.0.0',
+    status: 'online'
+  });
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'AgenSoft Backend está operativo' });
@@ -75,7 +84,7 @@ app.use((err: any, req: any, res: any, next: any) => {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+app.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`🚀 AgenSoft Backend corriendo en puerto ${PORT}`);
   console.log(`📝 Documentación: http://localhost:${PORT}/docs`);
   console.log(`💚 Health check: http://localhost:${PORT}/health`);
