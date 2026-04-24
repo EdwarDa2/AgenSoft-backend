@@ -7,12 +7,14 @@ export class PacienteServiceImpl implements IPacienteService {
   private pacienteRepository = new PacienteRepository();
 
   async crear(dto: CrearPacienteDTO) {
-    if (!dto.usuario_id || !dto.nombre_completo) {
+    const usuarioId = Number(dto.usuario_id);
+    console.log(`Intentando crear perfil para usuario_id: ${usuarioId}`);
+    if (!usuarioId || !dto.nombre_completo) {
       throw new Error('usuario_id y nombre_completo son requeridos');
     }
 
     const paciente = await this.pacienteRepository.crear({
-      usuario_id: dto.usuario_id,
+      usuario_id: usuarioId,
       nombre_completo: dto.nombre_completo,
       telefono: dto.telefono ?? null,
       informacion_medica: dto.informacion_medica ?? null,
