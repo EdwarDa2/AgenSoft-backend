@@ -27,7 +27,7 @@ export class BloqueController {
 
   obtenerPorId = async (req: Request, res: Response): Promise<void> => {
     try {
-      const id = parseInt(req.params.id, 10);
+      const id = parseInt(String(req.params.id), 10);
       const resultado = await this.bloqueService.obtenerPorId(id);
       res.status(200).json({ success: true, data: resultado });
     } catch (error: any) {
@@ -37,7 +37,7 @@ export class BloqueController {
 
   obtenerPorFecha = async (req: Request, res: Response): Promise<void> => {
     try {
-      const fecha = req.params.fecha;
+      const fecha = String(req.params.fecha);
       const resultado = await this.bloqueService.obtenerPorFecha(fecha);
       res.status(200).json({ success: true, data: resultado });
     } catch (error: any) {
@@ -68,7 +68,7 @@ export class BloqueController {
 
   actualizar = async (req: Request, res: Response): Promise<void> => {
     try {
-      const id = parseInt(req.params.id, 10);
+      const id = parseInt(String(req.params.id), 10);
       const dto: ActualizarBloqueDTO = req.body;
       const resultado = await this.bloqueService.actualizar(id, dto);
       res.status(200).json({ success: true, data: resultado });
@@ -79,7 +79,7 @@ export class BloqueController {
 
   eliminar = async (req: Request, res: Response): Promise<void> => {
     try {
-      const id = parseInt(req.params.id, 10);
+      const id = parseInt(String(req.params.id), 10);
       await this.bloqueService.eliminar(id);
       res.status(200).json({ success: true, message: 'Bloque eliminado' });
     } catch (error: any) {

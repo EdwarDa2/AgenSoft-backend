@@ -1,0 +1,1 @@
+{"version":3,"file":"bloque.mapper.d.ts","sourceRoot":"","sources":["bloque.mapper.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAgB,iBAAiB,EAAE,MAAM,kCAAkC,CAAC;AAExF,qBAAa,YAAY;IACvB,MAAM,CAAC,aAAa,CAAC,CAAC,EAAE,GAAG,GAAG,iBAAiB;IAwB/C,MAAM,CAAC,cAAc,CAAC,EAAE,EAAE,GAAG,EAAE,GAAG,iBAAiB,EAAE;CAGtD"}

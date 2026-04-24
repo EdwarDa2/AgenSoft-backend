@@ -1,0 +1,1 @@
+{"version":3,"file":"paciente.mapper.d.ts","sourceRoot":"","sources":["paciente.mapper.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,cAAc,EAAE,mBAAmB,EAAE,MAAM,oCAAoC,CAAC;AAE9F,qBAAa,cAAc;IACzB,MAAM,CAAC,aAAa,CAAC,CAAC,EAAE,cAAc,GAAG,mBAAmB;IAU5D,MAAM,CAAC,cAAc,CAAC,EAAE,EAAE,cAAc,EAAE,GAAG,mBAAmB,EAAE;CAGnE"}

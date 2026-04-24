@@ -63,7 +63,7 @@ export class UsuarioController {
   obtenerPorId = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const usuarioId = parseInt(id, 10);
+      const usuarioId = parseInt(String(id), 10);
 
       const resultado = await this.usuarioService.obtenerPorId(usuarioId);
 
@@ -114,7 +114,7 @@ export class UsuarioController {
   obtenerPorRol = async (req: Request, res: Response): Promise<void> => {
     try {
       const { rol_id } = req.params;
-      const rolId = parseInt(rol_id, 10);
+      const rolId = parseInt(String(rol_id), 10);
 
       const resultado = await this.usuarioService.obtenerPorRol(rolId);
 
@@ -137,7 +137,7 @@ export class UsuarioController {
   actualizar = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const usuarioId = parseInt(id, 10);
+      const usuarioId = parseInt(String(id), 10);
       const dto: ActualizarUsuarioDTO = req.body;
 
       const resultado = await this.usuarioService.actualizar(usuarioId, dto);
@@ -162,7 +162,7 @@ export class UsuarioController {
   eliminar = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const usuarioId = parseInt(id, 10);
+      const usuarioId = parseInt(String(id), 10);
 
       await this.usuarioService.eliminar(usuarioId);
 
@@ -185,7 +185,7 @@ export class UsuarioController {
   cambiarPassword = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const usuarioId = parseInt(id, 10);
+      const usuarioId = parseInt(String(id), 10);
       const dto: CambiarPasswordDTO = req.body;
 
       await this.usuarioService.cambiarPassword(usuarioId, dto);

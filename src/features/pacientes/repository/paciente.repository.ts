@@ -7,8 +7,8 @@ export class PacienteRepository {
       data: {
         usuario_id: datos.usuario_id,
         nombre_completo: datos.nombre_completo,
-        telefono: datos.telefono,
-        informacion_medica: datos.informacion_medica,
+        telefono: datos.telefono ?? null,
+        informacion_medica: datos.informacion_medica ?? null,
       },
     });
     return paciente as unknown as PacienteEntity;

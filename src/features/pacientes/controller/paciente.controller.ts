@@ -17,7 +17,7 @@ export class PacienteController {
 
   obtenerPorId = async (req: Request, res: Response): Promise<void> => {
     try {
-      const id = parseInt(req.params.id, 10);
+      const id = parseInt(String(req.params.id), 10);
       const resultado = await this.pacienteService.obtenerPorId(id);
       res.status(200).json({ success: true, data: resultado });
     } catch (error: any) {
@@ -27,7 +27,7 @@ export class PacienteController {
 
   obtenerPorUsuarioId = async (req: Request, res: Response): Promise<void> => {
     try {
-      const usuario_id = parseInt(req.params.usuario_id, 10);
+      const usuario_id = parseInt(String(req.params.usuario_id), 10);
       const resultado = await this.pacienteService.obtenerPorUsuarioId(usuario_id);
       res.status(200).json({ success: true, data: resultado });
     } catch (error: any) {
@@ -48,7 +48,7 @@ export class PacienteController {
 
   actualizar = async (req: Request, res: Response): Promise<void> => {
     try {
-      const id = parseInt(req.params.id, 10);
+      const id = parseInt(String(req.params.id), 10);
       const dto: ActualizarPacienteDTO = req.body;
       const resultado = await this.pacienteService.actualizar(id, dto);
       res.status(200).json({ success: true, data: resultado });
@@ -59,7 +59,7 @@ export class PacienteController {
 
   eliminar = async (req: Request, res: Response): Promise<void> => {
     try {
-      const id = parseInt(req.params.id, 10);
+      const id = parseInt(String(req.params.id), 10);
       await this.pacienteService.eliminar(id);
       res.status(200).json({ success: true, message: 'Paciente eliminado' });
     } catch (error: any) {

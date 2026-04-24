@@ -1,4 +1,5 @@
-import type { RegistrarUsuarioDTO, LoginDTO, ActualizarUsuarioDTO, LoginResponseDTO, CambiarPasswordDTO, UsuarioResponseDTO } from '../model/dto/usuario.dto.js';
+import type { RegistrarUsuarioDTO, LoginDTO, ActualizarUsuarioDTO, LoginResponseDTO, CambiarPasswordDTO } from '../model/dto/usuario.dto.js';
+import type { UsuarioResponseDTO } from '../model/entity/usuario.entity.js';
 
 /**
  * Interfaz: UsuarioService
