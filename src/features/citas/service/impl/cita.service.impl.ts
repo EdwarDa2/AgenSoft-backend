@@ -6,17 +6,22 @@ export class CitaServiceImpl {
     private citaRepository = new CitaRepository();
 
     async agendarCita(dto: CrearCitaDTO) {
-        if (!dto.paciente_id || !dto.bloque_id) {
-            throw new Error("El ID del paciente y el bloque son obligatorios");
+        const pacienteId = Number(dto.paciente_id);
+        const bloqueId = Number(dto.bloque_id);
+
+        if (!pacienteId || !bloqueId) {
+            throw new Error("El ID del paciente y el bloque son obligatorios y deben ser válidos");
         }
 
         // El paciente_id que viene del front es en realidad el usuario_id del AuthContext
-        const paciente = await this.citaRepository.obtenerPacientePorUsuarioId(dto.paciente_id);
+        console.log(`Buscando paciente para usuario_id: ${pacienteId}`);
+        const paciente = await this.citaRepository.obtenerPacientePorUsuarioId(pacienteId);
         if (!paciente) {
-            throw new Error("No se encontró el perfil de paciente para este usuario");
+            console.error(`No se encontró paciente para usuario_id: ${pacienteId}`);
+            throw new Error("No se encontró el perfil de paciente para este usuario. Por favor, completa tu perfil primero.");
         }
 
-        const disponible = await this.citaRepository.verificarDisponibilidad(dto.bloque_id);
+        const disponible = await this.citaRepository.verificarDisponibilidad(bloqueId);
         
         if (!disponible) {
             throw new Error("El bloque de horario ya está reservado o pendiente de revisión");
@@ -24,7 +29,7 @@ export class CitaServiceImpl {
 
         const entidad = await this.citaRepository.crear({
             paciente_id: paciente.id,
-            bloque_id: dto.bloque_id,
+            bloque_id: bloqueId,
             motivo_consulta: dto.motivo_consulta || "Sin motivo",
             estado_id: 1
         });
