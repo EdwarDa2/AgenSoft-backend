@@ -10,5 +10,10 @@ npm run build
 echo "✅ Build complete"
 
 echo "🗄️ Syncing database schema..."
-npx prisma db push --skip-generate
+if [ -z "${DATABASE_URL}" ]; then
+	echo "⚠️ DATABASE_URL not set — skipping prisma db push (safe for local dev)."
+	echo "If you want to push migrations in CI, set DATABASE_URL in the environment."
+else
+	npx prisma db push
+fi
 echo "✅ Database synced"
